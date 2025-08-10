@@ -1,0 +1,4 @@
+requests
+eth-account
+cryptography
+python-dotenv
