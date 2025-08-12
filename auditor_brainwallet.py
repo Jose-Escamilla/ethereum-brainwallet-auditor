@@ -66,6 +66,8 @@ def query_etherscan_balance_and_lasttx(address: str, api_key: Optional[str]):
     else:
         balance = int(data_bal.get("result", "0"))
 
+    time.sleep(0.6)  # ← Pausa para no exceder 2 consultas por segundo
+
     # tx list (normal)
     params_tx = {"module": "account", "action": "txlist", "address": address, "startblock": 0, "endblock": 99999999, "sort": "desc", "apikey": api_key}
     rtx = requests.get(base, params=params_tx, timeout=10)
@@ -121,6 +123,7 @@ def generate_candidates_from_wordlist(wordlist: List[str]) -> List[str]:
     for w in wordlist:
         candidates.append(w)
         candidates.append(w + "123")
+        candidates.append(w + "123456")
         candidates.append(w + "2020")
         candidates.append(w.capitalize())
         # leet simple
@@ -203,6 +206,15 @@ def chunks(iterable, size=1000):
 # Ejecución ejemplo
 # -----------------------
 if __name__ == "__main__":
+    progress_file = "progress.txt"
+
+    # Leer progreso previo
+    if os.path.exists(progress_file):
+        with open(progress_file, "r") as f:
+            start_block = int(f.read().strip())
+    else:
+        start_block = 0
+    
     try:
         with open("rockyou.txt", "r", encoding="latin-1") as f:
             for i, batch in enumerate(chunks(f, 1000), start=1):
@@ -211,8 +223,14 @@ if __name__ == "__main__":
                 run_audit(sample_wordlist, ETHERSCAN_API_KEY, OUT_FILE)
                 # Pausa para revisar resultados antes del siguiente bloque
                 # input("Presiona Enter para procesar el siguiente bloque...")
+
+                # Guardar progreso
+                with open(progress_file, "w") as pf:
+                    pf.write(str(i + 1))
+                
                 print("Esperando 5 segundos antes del siguiente bloque...")
                 time.sleep(5)
+                
     except FileNotFoundError:
         print("No se encontró rockyou.txt, usando lista pequeña por defecto.")
         sample_wordlist = ["password", "123456", "admin", "qwerty", "letmein"]

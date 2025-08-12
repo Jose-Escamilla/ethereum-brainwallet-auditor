@@ -79,6 +79,45 @@ The program will process the dictionary in blocks of 1000 phrases, generate vari
 
 Execution will wait 5 seconds between blocks to avoid saturating the API.
 
+### 🔄 Progress Tracker
+
+The code includes a progress tracking system that allows you to resume the audit from where it left off:
+
+**How this change works:**
+- `progress.txt` stores the number of the 1000-word block where you left off.
+- When starting, it reads that number and skips all previous blocks.
+- Each time it finishes a block, it saves the next index in `progress.txt`.
+- If you kill the process or the PC shuts down, when you restart it will continue from there.
+
+---
+
+## 🧠 Theoretical Foundations: Is it possible to find addresses with funds?
+
+In theory, yes it is possible, but in practice the probability is extremely, almost absurdly low if we're talking about randomly generated addresses.
+
+Let me explain why:
+
+### 1️⃣ Ethereum Private Key Space
+A private key is a 256-bit number.
+This means there are 2^256 possible combinations, that is:
+≈ 1.1579 × 10^77 possible keys
+(A number so large that it's greater than the estimated number of atoms in the observable universe).
+
+### 2️⃣ Brainwallets and Weak Patterns
+The only reason why scripts like the one you're using have found addresses with funds in the past is because:
+- Some people used simple passwords (e.g., "password", "123456", "letmein") as seed phrases to derive their private key.
+- Those keys are predictable and may be in dictionaries like rockyou.txt.
+- This drastically reduces the space to test (instead of 2^256, perhaps to a few million).
+
+**Real example:**
+A seed phrase "password123" → deterministic private key → address that someone used → detectable funds.
+
+### 3️⃣ Real probabilities
+- **Totally random keys** → success probability ≈ 0.
+- **Keys from weak password dictionaries** → probability > 0, but still very low.
+
+That's why scripts usually focus on brainwallets or weak keys and not on the entire possible space.
+
 ---
 
 ## ⚠️ What is a Brainwallet and why are they vulnerable?

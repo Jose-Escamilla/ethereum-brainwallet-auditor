@@ -80,6 +80,45 @@ El programa procesará el diccionario en bloques de 1000 frases, generará varia
 
 La ejecución esperará 5 segundos entre bloques para evitar saturar la API.
 
+### 🔄 Marcador de Progreso
+
+El código incluye un sistema de marcador de progreso que permite reanudar la auditoría desde donde se quedó:
+
+**Cómo funciona este cambio:**
+- `progress.txt` almacena el número del bloque de 1000 palabras en el que te quedaste.
+- Al iniciar, lee ese número y omite todos los bloques anteriores.
+- Cada vez que termina un bloque, guarda el índice siguiente en `progress.txt`.
+- Si matas el proceso o se apaga el PC, cuando lo reinicies seguirá desde ahí.
+
+---
+
+## 🧠 Fundamentos Teóricos: ¿Es posible encontrar direcciones con fondos?
+
+En teoría, sí es posible, pero en la práctica la probabilidad es extremadamente, casi absurdamente baja si hablamos de direcciones generadas al azar.
+
+Te explico por qué:
+
+### 1️⃣ Espacio de claves privadas de Ethereum
+Una clave privada es un número de 256 bits.
+Eso significa que hay 2^256 combinaciones posibles, es decir:
+≈ 1,1579 × 10^77 posibles claves
+(Un número tan grande que es mayor que el número estimado de átomos en el universo observable).
+
+### 2️⃣ Brainwallets y patrones débiles
+La única razón por la que scripts como el que usas sí han encontrado direcciones con fondos en el pasado es porque:
+- Algunas personas usaban contraseñas simples (ej. "password", "123456", "letmein") como seed phrase para derivar su clave privada.
+- Esas claves son predecibles y pueden estar en diccionarios como rockyou.txt.
+- Esto reduce drásticamente el espacio a probar (en lugar de 2^256, quizás a unos pocos millones).
+
+**Ejemplo real:**
+Una seed phrase "password123" → clave privada determinística → dirección que alguien usó → fondos detectables.
+
+### 3️⃣ Probabilidades reales
+- **Claves totalmente aleatorias** → probabilidad de éxito ≈ 0.
+- **Claves provenientes de un diccionario de contraseñas débiles** → probabilidad > 0, pero sigue siendo muy baja.
+
+Por eso los scripts suelen enfocarse en brainwallets o weak keys y no en todo el espacio posible.
+
 ---
 
 ## ⚠️ ¿Qué es un Brainwallet y por qué son vulnerables?
